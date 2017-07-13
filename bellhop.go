@@ -11,7 +11,7 @@ import (
 func main() {
 
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "usage: bellhop slack-bot-token\n")
+		fmt.Fprintf(os.Stderr, "Error: Please provide a valid token\n")
 		os.Exit(1)
 	}
 
