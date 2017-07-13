@@ -43,13 +43,11 @@ func main() {
 			break
 		}
 
-		if message.Type == "message" && strings.Contains(message.Text, "<@"+id+">") {
+		if message.Type == "message" {
 			if strings.Contains(message.Text, "!ping") {
-				go func(m Message) {
-					m.Text = "pong"
-					m.Id = atomic.AddUint64(&counter, 1)
-					openedWebSocket.WriteJSON(m)
-				}(message)
+				go postMessage(openedWebSocket, message, "pong")
+			} else if strings.Contains(message.Text, "!bing") {
+				go postMessage(openedWebSocket, message, "bong")
 			}
 			fmt.Println(message.Text)
 		}
