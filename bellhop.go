@@ -6,7 +6,17 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync/atomic"
 )
+
+var (
+	counter uint64
+)
+
+func getMessage(ws *websocket.Conn) (m Message, err error) {
+	err = websocket.ReadJSON(ws, &m)
+	return
+}
 
 func main() {
 
