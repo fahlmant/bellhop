@@ -18,7 +18,8 @@ func getMessage(openSocket *websocket.Conn) (m Message, err error) {
 	return
 }
 
-func postMessage(openSocket *websocket.Conn, m Message) (err error) {
+func postMessage(openSocket *websocket.Conn, m Message, text string) (err error) {
+	m.Text = text
 	m.Id = atomic.AddUint64(&counter, 1)
 	err = openSocket.WriteJSON(m)
 	return
