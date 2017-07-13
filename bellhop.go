@@ -29,22 +29,22 @@ func main() {
 	openedWebSocket, id := connectSlack(os.Args[1])
 
 	for {
-		messagetype, message, err := openedWebSocket.ReadMessage()
+
+		message, err := getMessage(openedWebSocket)
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
 
-		if messagetype == websocket.TextMessage && strings.Contains(string(message[:]), "<@"+id+">") {
-		/*	if strings.Contains(string(message[:]), "!ponging") {
-				err = postMessage(openedWebSocket, "pong")
-				if err != nil {
-					log.Println("write:", err)
-					break
-				}
-			}*/
-			fmt.Println(string(message))
+		if message.Type == "message" && strings.Contains(message.Text, "<@"+id+">") {
+			if strings.Contains(message.Text, "!ping") {
+				go func(m Message) {
+					m.Text = "pong"
+					m.Id = atomic.AddUint64(&counter, 1)
+					openedWebSocket.WriteJSON(m)
+				}(message)
+			}
+			fmt.Println(message.Text)
 		}
 	}
-
 }
