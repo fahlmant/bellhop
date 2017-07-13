@@ -13,8 +13,14 @@ var (
 	counter uint64
 )
 
-func getMessage(ws *websocket.Conn) (m Message, err error) {
-	err = websocket.ReadJSON(ws, &m)
+func getMessage(openSocket *websocket.Conn) (m Message, err error) {
+	err = websocket.ReadJSON(openSocket, &m)
+	return
+}
+
+func postMessage(openSocket *websocket.Conn, m Message) (err error) {
+	m.Id = atomic.AddUint64(&counter, 1)
+	err = openSocket.WriteJSON(m)
 	return
 }
 
