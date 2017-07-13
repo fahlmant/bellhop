@@ -19,6 +19,13 @@ type responseSelf struct {
 	Id string `json:"id"`
 }
 
+type Message struct {
+	Id      uint64 `json:"id"`
+	Type    string `json:"type"`
+	Channel string `json:"channel"`
+	Text    string `json:"text"`
+}
+
 func startSlack(token string) (wsurl, id string, err error) {
 	url := fmt.Sprintf("https://slack.com/api/rtm.start?token=%s", token)
 	resp, err := http.Get(url)
