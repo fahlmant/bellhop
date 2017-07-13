@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// start a websocket-based Real Time API session
-	openedWebSocket, id := connectSlack(os.Args[1])
+	openedWebSocket, _ := connectSlack(os.Args[1])
 
 	for {
 
