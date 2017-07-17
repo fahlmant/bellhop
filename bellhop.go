@@ -25,10 +25,24 @@ func postMessage(openSocket *websocket.Conn, m Message, text string) (err error)
 	return
 }
 
+/*
+ *Commands:
+ * Get servers - Returns a list of the servers and their reservations
+ * Get server  - Returns more detailed information about a given server
+ * Reserve server - If available, reserves a specific server
+ * Reserve n servers - If availabe, reserves n servers from the pool randomly
+ * Release server(s) - releases the servers one has reserved
+ * More time - get more time reserved for a server reservation
+ */
 func main() {
 
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "Error: Please provide a valid token\n")
+		os.Exit(1)
+	}
+
+	if err := cmd.RootCmd.Execute(); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -42,14 +56,10 @@ func main() {
 			log.Println("read:", err)
 			break
 		}
-
 		if message.Type == "message" {
 			if strings.Contains(message.Text, "!ping") {
 				go postMessage(openedWebSocket, message, "pong")
-			} else if strings.Contains(message.Text, "!bing") {
-				go postMessage(openedWebSocket, message, "bong")
 			}
-			fmt.Println(message.Text)
 		}
 	}
 }
