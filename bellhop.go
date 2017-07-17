@@ -127,12 +127,12 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 
 /*
  *Commands:
- * !list            - Returns a list of the servers and their reservations
- * !server   <name> - Returns more detailed information about a given server
- * !reserver <num>  - If availabe, reserves n servers from the pool randomly
- * !release  <name> - releases the server reserved if requestor is the owner
- * !timer    <name> - Get info on time limit of server
- * !addtime  <name> - get more time reserved for a server reservation
+ * !list                     - Returns a list of the servers and their reservations
+ * !server   <name>          - Returns more detailed information about a given server
+ * !reserve  <num>           - If availabe, reserves n servers from the pool randomly
+ * !release  <name>          - releases the server reserved if requestor is the owner
+ * !timer    <name>          - Get info on time limit of server
+ * !addtime  <name> <amount> - get more time reserved for a server reservation
  */
 func main() {
 
