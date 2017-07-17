@@ -55,6 +55,11 @@ func getTimer(server string) (time int, err error) {
 	return 10, nil
 }
 
+func addTime(server string, amount int) (err error) {
+
+	return nil
+}
+
 func handleMessage(openSocket *websocket.Conn, message Message) {
 
 	if strings.EqualFold(message.Text, "!ping") {
@@ -108,6 +113,14 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 			postMessage(openSocket, message, ""+server_name+" has "+strconv.Itoa(time_left)+" minutes left")
 		}
 	} else if strings.Contains(message.Text, "!addtime") {
+		args := strings.Split(message.Text, " ")
+		time, _ := strconv.Atoi(args[2])
+		err := addTime(args[1], time)
+		if err != nil {
+			postMessage(openSocket, message, "Something went wrong.")
+		} else {
+			postMessage(openSocket, message, "Succesfully added "+args[2]+" minutes to "+args[1])
+		}
 	}
 
 }
@@ -115,11 +128,11 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 /*
  *Commands:
  * !list            - Returns a list of the servers and their reservations
- * !server <name>   - Returns more detailed information about a given server
+ * !server   <name> - Returns more detailed information about a given server
  * !reserver <num>  - If availabe, reserves n servers from the pool randomly
- * !release <name>  - releases the server reserved if requestor is the owner
- * !timer <name>    - Get info on time limit of server
- * !addtime <name>  - get more time reserved for a server reservation
+ * !release  <name> - releases the server reserved if requestor is the owner
+ * !timer    <name> - Get info on time limit of server
+ * !addtime  <name> - get more time reserved for a server reservation
  */
 func main() {
 
