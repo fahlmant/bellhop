@@ -14,11 +14,13 @@ var (
 )
 
 func getMessage(openSocket *websocket.Conn) (m Message, err error) {
+
 	err = websocket.ReadJSON(openSocket, &m)
 	return
 }
 
 func postMessage(openSocket *websocket.Conn, m Message, text string) (err error) {
+
 	m.Text = text
 	m.Id = atomic.AddUint64(&counter, 1)
 	err = openSocket.WriteJSON(m)
@@ -35,6 +37,38 @@ func getServerInfo(server string) (text []string) {
 
 	return nil
 }
+
+func handleMessage(openSocket *websocket.Conn, message Message) {
+
+	if strings.EqualFold(message.Text, "!ping") {
+		go postMessage(openSocket, message, "pong")
+	} else if strings.EqualFold(message.Text, "!list") {
+		list := listServers()
+		for i := 0; i < len(list); i += 1 {
+			postMessage(openSocket, message, list[i])
+		}
+	} else if strings.Contains(message.Text, "!server") {
+		server_name := strings.TrimLeft(message.Text, "!server")
+		if server_name == "" {
+			go postMessage(openSocket, message, "Error: Please provide a server name")
+		} else {
+			go postMessage(openSocket, message, server_name)
+		}
+
+	} else if strings.Contains(message.Text, "!solo-reserve") {
+
+	} else if strings.Contains(message.Text, "!reserve") {
+
+	} else if strings.Contains(message.Text, "!release") {
+
+	} else if strings.Contains(message.Text, "!timer") {
+
+	} else if strings.Contains(message.Text, "!addtime") {
+
+	}
+
+}
+
 /*
  *Commands:
  * Get servers - Returns a list of the servers and their reservations
@@ -63,9 +97,7 @@ func main() {
 			break
 		}
 		if message.Type == "message" {
-			if strings.Contains(message.Text, "!ping") {
-				go postMessage(openedWebSocket, message, "pong")
-			}
+			handleMessage(openedWebSocket, message)
 		}
 	}
 }
