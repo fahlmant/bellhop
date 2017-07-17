@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"sync/atomic"
 )
@@ -39,6 +40,11 @@ func getServerInfo(server string) (text []string) {
 	return
 }
 
+func reserveServers(number int) (err error) {
+
+	return nil
+}
+
 func handleMessage(openSocket *websocket.Conn, message Message) {
 
 	if strings.EqualFold(message.Text, "!ping") {
@@ -59,9 +65,25 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 			}
 		}
 	} else if strings.Contains(message.Text, "!solo-reserve") {
-
+		err := reserveServers(1)
+		if err != nil {
+			postMessage(openSocket, message, "Error: No servers available")
+		} else {
+			postMessage(openSocket, message, "Succesfully allocated 1 server for you!")
+		}
 	} else if strings.Contains(message.Text, "!reserve") {
-
+		number := strings.TrimLeft(message.Text, "!reserve ")
+		i, num_err := strconv.Atoi(number)
+		if num_err != nil {
+			postMessage(openSocket, message, "Error: Please enter a valid number")
+		} else {
+			err := reserveServers(i)
+			if err != nil {
+				postMessage(openSocket, message, "Error: No servers available")
+			} else {
+				postMessage(openSocket, message, "Succesfully allocated "+number+" servers for you!")
+			}
+		}
 	} else if strings.Contains(message.Text, "!release") {
 
 	} else if strings.Contains(message.Text, "!timer") {
