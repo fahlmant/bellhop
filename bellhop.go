@@ -32,6 +32,7 @@ func postMessage(openSocket *websocket.Conn, m Message, text string) (err error)
  * Reserve server - If available, reserves a specific server
  * Reserve n servers - If availabe, reserves n servers from the pool randomly
  * Release server(s) - releases the servers one has reserved
+ * Query Time - Get info on time limit of server
  * More time - get more time reserved for a server reservation
  */
 func main() {
