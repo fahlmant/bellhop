@@ -25,6 +25,16 @@ func postMessage(openSocket *websocket.Conn, m Message, text string) (err error)
 	return
 }
 
+func listServers() (text []string) {
+
+	text = []string{"none", "none2"}
+	return
+}
+
+func getServerInfo(server string) (text []string) {
+
+	return nil
+}
 /*
  *Commands:
  * Get servers - Returns a list of the servers and their reservations
