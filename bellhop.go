@@ -35,7 +35,8 @@ func listServers() (text []string) {
 
 func getServerInfo(server string) (text []string) {
 
-	return nil
+	text = []string{server}
+	return
 }
 
 func handleMessage(openSocket *websocket.Conn, message Message) {
@@ -52,9 +53,11 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 		if server_name == "" {
 			go postMessage(openSocket, message, "Error: Please provide a server name")
 		} else {
-			go postMessage(openSocket, message, server_name)
+			info := getServerInfo(server_name)
+			for i := 0; i < len(info); i += 1 {
+				postMessage(openSocket, message, info[i])
+			}
 		}
-
 	} else if strings.Contains(message.Text, "!solo-reserve") {
 
 	} else if strings.Contains(message.Text, "!reserve") {
