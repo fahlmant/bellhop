@@ -115,20 +115,19 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 			postMessage(openSocket, message, ""+server_name+" has "+strconv.Itoa(time_left)+" minutes left")
 		}
 	} else if strings.Contains(message.Text, "!addtime") {
-
 	}
 
 }
 
 /*
  *Commands:
- * Get servers - Returns a list of the servers and their reservations
- * Get server  - Returns more detailed information about a given server
- * Reserve server - If available, reserves a specific server
- * Reserve n servers - If availabe, reserves n servers from the pool randomly
- * Release server(s) - releases the servers one has reserved
- * Query Time - Get info on time limit of server
- * More time - get more time reserved for a server reservation
+ * !list            - Returns a list of the servers and their reservations
+ * !server <name>   - Returns more detailed information about a given server
+ * !solo-reserve    - Reserves 1 server
+ * !reserver <num>  - If availabe, reserves n servers from the pool randomly
+ * !release <name>  - releases the server reserved if requestor is the owner
+ * !timer <name>    - Get info on time limit of server
+ * !addtime <name>  - get more time reserved for a server reservation
  */
 func main() {
 
