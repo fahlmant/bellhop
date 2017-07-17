@@ -74,13 +74,6 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 				postMessage(openSocket, message, info[i])
 			}
 		}
-	} else if strings.Contains(message.Text, "!solo-reserve") {
-		err := reserveServers(1)
-		if err != nil {
-			postMessage(openSocket, message, "Error: No servers available")
-		} else {
-			postMessage(openSocket, message, "Succesfully allocated 1 server for you!")
-		}
 	} else if strings.Contains(message.Text, "!reserve") {
 		number := strings.TrimLeft(message.Text, "!reserve ")
 		i, num_err := strconv.Atoi(number)
@@ -123,7 +116,6 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
  *Commands:
  * !list            - Returns a list of the servers and their reservations
  * !server <name>   - Returns more detailed information about a given server
- * !solo-reserve    - Reserves 1 server
  * !reserver <num>  - If availabe, reserves n servers from the pool randomly
  * !release <name>  - releases the server reserved if requestor is the owner
  * !timer <name>    - Get info on time limit of server
