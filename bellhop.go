@@ -45,6 +45,11 @@ func reserveServers(number int) (err error) {
 	return nil
 }
 
+func releaseServer(server string) (err error) {
+
+	return nil
+}
+
 func handleMessage(openSocket *websocket.Conn, message Message) {
 
 	if strings.EqualFold(message.Text, "!ping") {
@@ -85,7 +90,17 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 			}
 		}
 	} else if strings.Contains(message.Text, "!release") {
-
+		server_name := strings.TrimLeft(message.Text, "!release ")
+		if server_name == "" {
+			go postMessage(openSocket, message, "Error: Please provide a server name")
+		} else {
+			err := releaseServer(server_name)
+			if err != nil {
+				postMessage(openSocket, message, "Something went wrong. Do you own the server? Is the server name valid?")
+			} else {
+				postMessage(openSocket, message, "Succesfully released "+server_name)
+			}
+		}
 	} else if strings.Contains(message.Text, "!timer") {
 
 	} else if strings.Contains(message.Text, "!addtime") {
