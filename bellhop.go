@@ -50,6 +50,11 @@ func releaseServer(server string) (err error) {
 	return nil
 }
 
+func getTimer(server string) (time int, err error) {
+
+	return 10, nil
+}
+
 func handleMessage(openSocket *websocket.Conn, message Message) {
 
 	if strings.EqualFold(message.Text, "!ping") {
@@ -102,7 +107,13 @@ func handleMessage(openSocket *websocket.Conn, message Message) {
 			}
 		}
 	} else if strings.Contains(message.Text, "!timer") {
-
+		server_name := strings.TrimLeft(message.Text, "!timer ")
+		if server_name == "" {
+			go postMessage(openSocket, message, "Error: Please provide a server name")
+		} else {
+			time_left, _ := getTimer(server_name)
+			postMessage(openSocket, message, ""+server_name+" has "+strconv.Itoa(time_left)+" minutes left")
+		}
 	} else if strings.Contains(message.Text, "!addtime") {
 
 	}
