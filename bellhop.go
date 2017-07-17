@@ -41,11 +41,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := cmd.RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
 	// start a websocket-based Real Time API session
 	openedWebSocket, _ := connectSlack(os.Args[1])
 
