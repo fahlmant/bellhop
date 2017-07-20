@@ -57,7 +57,6 @@ func getTimer(server string, cli *clientv3.Client) (time int, err error) {
 
 	key := server + "/time"
 	resp, err := cli.Get(context.TODO(), key)
-	fmt.Printf("%d", resp.Count)
 	time_str := resp.Kvs[0].Value
 	time, _ = strconv.Atoi(string(time_str))
 	return time, nil
