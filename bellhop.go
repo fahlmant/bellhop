@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/coreos/etcd/clientv3"
 	"github.com/gorilla/websocket"
+	"golang.org/x/net/context"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"sync/atomic"
+	"time"
 )
 
 var (
@@ -60,7 +63,7 @@ func addTime(server string, amount int) (err error) {
 	return nil
 }
 
-func handleMessage(openSocket *websocket.Conn, message Message) {
+func handleMessage(openSocket *websocket.Conn, message Message, cli *clientv3.Client) {
 
 	if strings.EqualFold(message.Text, "!ping") {
 		go postMessage(openSocket, message, "pong")
@@ -141,9 +144,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"localhost:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cli.Close()
+
 	// start a websocket-based Real Time API session
 	openedWebSocket, _ := connectSlack(os.Args[1])
-
 	for {
 
 		message, err := getMessage(openedWebSocket)
@@ -152,7 +163,9 @@ func main() {
 			break
 		}
 		if message.Type == "message" {
-			handleMessage(openedWebSocket, message)
+			handleMessage(openedWebSocket, message, cli)
 		}
 	}
+
+	defer cli.Close()
 }
