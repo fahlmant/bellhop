@@ -50,8 +50,10 @@ func reserveServer(server string, cli *clientv3.Client) (err error) {
 	return nil
 }
 
-func releaseServer(server string) (err error) {
+func releaseServer(server string, cli *clientv3.Client) (err error) {
 
+	key := server + "/reserved"
+	_, err = cli.Put(context.TODO(), key, "false")
 	return nil
 }
 
@@ -105,7 +107,7 @@ func handleMessage(openSocket *websocket.Conn, message Message, cli *clientv3.Cl
 		if server_name == "" {
 			go postMessage(openSocket, message, "Error: Please provide a server name")
 		} else {
-			err := releaseServer(server_name)
+			err := releaseServer(server_name, cli)
 			if err != nil {
 				postMessage(openSocket, message, "Something went wrong. Do you own the server? Is the server name valid?")
 			} else {
