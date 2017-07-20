@@ -66,8 +66,10 @@ func getTimer(server string, cli *clientv3.Client) (time int, err error) {
 	return time, nil
 }
 
-func addTime(server string, amount int) (err error) {
+func addTime(server string, amount int64, cli *clientv3.Client) (err error) {
 
+	resp, err := cli.Grant(context.TODO(), amount)
+	_, err = cli.Put(context.TODO(), server, "time", clientv3.WithLease(resp.ID))
 	return nil
 }
 
@@ -125,7 +127,8 @@ func handleMessage(openSocket *websocket.Conn, message Message, cli *clientv3.Cl
 	} else if strings.Contains(message.Text, "!addtime") {
 		args := strings.Split(message.Text, " ")
 		time, _ := strconv.Atoi(args[2])
-		err := addTime(args[1], time)
+		time64 := int64(time)
+		err := addTime(args[1], time64, cli)
 		if err != nil {
 			postMessage(openSocket, message, "Something went wrong.")
 		} else {
