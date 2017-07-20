@@ -53,9 +53,14 @@ func releaseServer(server string) (err error) {
 	return nil
 }
 
-func getTimer(server string) (time int, err error) {
+func getTimer(server string, cli *clientv3.Client) (time int, err error) {
 
-	return 10, nil
+	key := server + "/time"
+	resp, err := cli.Get(context.TODO(), key)
+	fmt.Printf("%d", resp.Count)
+	time_str := resp.Kvs[0].Value
+	time, _ = strconv.Atoi(string(time_str))
+	return time, nil
 }
 
 func addTime(server string, amount int) (err error) {
@@ -112,7 +117,7 @@ func handleMessage(openSocket *websocket.Conn, message Message, cli *clientv3.Cl
 		if server_name == "" {
 			go postMessage(openSocket, message, "Error: Please provide a server name")
 		} else {
-			time_left, _ := getTimer(server_name)
+			time_left, _ := getTimer(server_name, cli)
 			postMessage(openSocket, message, ""+server_name+" has "+strconv.Itoa(time_left)+" minutes left")
 		}
 	} else if strings.Contains(message.Text, "!addtime") {
