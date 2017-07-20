@@ -43,8 +43,10 @@ func getServerInfo(server string) (text []string) {
 	return
 }
 
-func reserveServers(number int) (err error) {
+func reserveServer(server string, cli *clientv3.Client) (err error) {
 
+	key := server + "/reserved"
+	_, err = cli.Put(context.TODO(), key, "true")
 	return nil
 }
 
@@ -87,16 +89,15 @@ func handleMessage(openSocket *websocket.Conn, message Message, cli *clientv3.Cl
 			}
 		}
 	} else if strings.Contains(message.Text, "!reserve") {
-		number := strings.TrimLeft(message.Text, "!reserve ")
-		i, num_err := strconv.Atoi(number)
-		if num_err != nil {
-			postMessage(openSocket, message, "Error: Please enter a valid number")
+		server_name := strings.TrimLeft(message.Text, "!reserve ")
+		if server_name == "" {
+			go postMessage(openSocket, message, "Error: Please provide a server name")
 		} else {
-			err := reserveServers(i)
+			err := reserveServer(server_name, cli)
 			if err != nil {
-				postMessage(openSocket, message, "Error: No servers available")
+				postMessage(openSocket, message, "Something went wrong. Is the server name valid?")
 			} else {
-				postMessage(openSocket, message, "Succesfully allocated "+number+" servers for you!")
+				postMessage(openSocket, message, "Succesfully reserved "+server_name)
 			}
 		}
 	} else if strings.Contains(message.Text, "!release") {
