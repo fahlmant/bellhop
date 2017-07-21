@@ -59,8 +59,9 @@ func releaseServer(server string, cli *clientv3.Client) (err error) {
 
 func getTimer(server string, cli *clientv3.Client) (time int, err error) {
 
-	key := server + "/time"
+	key := server + "/time/leaseID"
 	resp, err := cli.Get(context.TODO(), key)
+	//this gets the leaseID, now use the leaseID to get the TTL for that object and return it
 	time_str := resp.Kvs[0].Value
 	time, _ = strconv.Atoi(string(time_str))
 	return time, nil
@@ -68,8 +69,10 @@ func getTimer(server string, cli *clientv3.Client) (time int, err error) {
 
 func addTime(server string, amount int64, cli *clientv3.Client) (err error) {
 
+	leaseID := server + "time/leaseID"
 	resp, err := cli.Grant(context.TODO(), amount)
 	_, err = cli.Put(context.TODO(), server, "time", clientv3.WithLease(resp.ID))
+	_, _ = cli.Put(context.TODO(), leaseID, string(resp.ID))
 	return nil
 }
 
